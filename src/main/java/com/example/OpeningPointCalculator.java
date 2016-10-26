@@ -9,6 +9,11 @@ public class OpeningPointCalculator {
     private double terminalOneThousandFeetTimeInSeconds = 5.5;
     private double freefallTimeInSeconds;
 
+    public OpeningPointCalculator(double exitAltitude, double deploymentAltitude) {
+        this.setExitAltitude(exitAltitude);
+        this.setDeploymentAltitude(deploymentAltitude);
+    }
+
     public double getFreefallTimeInSeconds() {
         double feetAtTerminalVelocity = (exitAltitude - deploymentAltitude - 1000);
         if (1000 < (exitAltitude - deploymentAltitude)) {
@@ -19,12 +24,6 @@ public class OpeningPointCalculator {
             freefallTimeInSeconds += firstOneThousandFeetInSeconds * (exitAltitude - deploymentAltitude);
         }
         return freefallTimeInSeconds;
-    }
-
-
-    public OpeningPointCalculator(double exitAltitude, double deploymentAltitude) {
-        this.setExitAltitude(exitAltitude);
-        this.setDeploymentAltitude(deploymentAltitude);
     }
 
     public double getExitAltitude() {
@@ -56,6 +55,9 @@ public class OpeningPointCalculator {
     }
 
     public static void main(String[] args) {
+        double exitAltitude = 13500;
+        double deploymentAltitude = 5000;
+        OpeningPointCalculator OPCalculator = new OpeningPointCalculator(exitAltitude, deploymentAltitude);
         Winds winds = new Winds();
         winds.addWind(12000, 63, 310);
         winds.addWind( 9000, 53, 305);
