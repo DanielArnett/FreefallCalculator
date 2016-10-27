@@ -137,21 +137,34 @@ public class Winds {
      * @return The average heading of the wind in degrees
      */
     public double getAverageHeading() {
-        double average = this.averageX()/this.averageY();
+        return pointToHeadingInDegrees(this.averageY(),this.averageX());
+    }
 
-        average = Math.atan(average);
+    /**
+     * Convert an x,y pair into a heading in radians. Note that since we're using compass
+     * headings instead of the unit circle x and y are flipped.
+     * @param x
+     * @param y
+     * @return An angle in radians corresponding to the heading of point x,y.
+     */
+    private double pointToHeadingInRadians(double x, double y) {
+        double heading = y/x;
+
+        heading = Math.atan(heading);
         // If x is negative on the unit circle add Pi to the value
-        if (this.averageY() < 0) {
-            average += Math.PI;
+        if (x < 0) {
+            heading += Math.PI;
         }
         // If x is positive but y is negative on the unit circle
-        else if (0 < this.averageY() && this.averageX() < 0)
+        else if (0 < x && y < 0)
         {
             // When x is positive but y is negative arctan returns values which are off by 2*Pi
-            average += 2*Math.PI;
+            heading += 2*Math.PI;
         }
-//        average += 2*Math.PI;
-        return Math.toDegrees(average);
+        return heading;
+    }
+    private double pointToHeadingInDegrees(double x, double y) {
+        return Math.toDegrees(this.pointToHeadingInRadians(x,y));
     }
 
     /**
@@ -242,20 +255,33 @@ public class Winds {
             double highX = windSpeed.get(i+1) * Math.cos(Math.toRadians(windHeading.get(i+1)));
             double highY = windSpeed.get(i+1) * Math.sin(Math.toRadians(windHeading.get(i+1)));
 
+            // Add the lower of the altitude pair, one of the recorded windspeeds that
+            // was set by the user.
             addInterpolatedWind(windAltitude.get(i), windSpeed.get(i), windHeading.get(i));
             // For each interpolated altitude
             for (int j = 0; j < stepsBetweenPair; j++) {
+                // Generate the interpolated x and y values.
                 double x = ((stepsBetweenPair - 1 - j)/stepsBetweenPair) * lowX + ((j+1)/stepsBetweenPair) * highX;
                 double y = ((stepsBetweenPair - 1 - j)/stepsBetweenPair) * lowY + ((j+1)/stepsBetweenPair) * highY;
-                System.out.println(String.valueOf(x) + "," + String.valueOf(y));
                 // Set the new heading
-
+                double heading = pointToHeadingInDegrees(x,y);
                 // Set the new Speed
-
+                double speed = Math.sqrt(x*x +y*y);
+                // If there isn't already one recorded at that altitude
+                if (!windAltitude.contains(stepAltitude)) {
+                    // Add the interpolated wind value
+                    addInterpolatedWind(stepAltitude, speed, heading);
+                }
+                // Increment the altitude of the next step
                 stepAltitude += feetPerStep;
             }
         }
-        addInterpolatedWind(windAltitude.get(windAltitude.size()-1), windSpeed.get(windAltitude.size()-1), windHeading.get(windAltitude.size()-1));
+        addInterpolatedWind(windAltitude.get(windAltitude.size()-1),
+                windSpeed.get(windAltitude.size()-1),
+                windHeading.get(windAltitude.size()-1));
+        if (interpolatedAltitude.size() != interpolatedSpeed.size() || interpolatedAltitude.size() != interpolatedHeading.size()) {
+            System.out.println("Warning! Unequal number of altitudes,speeds, and sizes.");
+        }
     }
     public double getMaxAltitude() {
         if (currentSortMethod != SortMethod.ALTITUDE) {
