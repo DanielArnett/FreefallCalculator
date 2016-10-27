@@ -63,7 +63,7 @@ public class OpeningPointCalculator {
         winds.addWind( 9000, 53, 305);
         winds.addWind( 6000, 43, 290);
         winds.addWind( 3000, 32, 300);
-
+        winds.interpolateWindspeedLinearly(12000-3000);
         System.out.println("Average Heading:    " + String.valueOf(winds.getAverageHeading()));
         System.out.println("Average Wind Speed: " + String.valueOf(winds.getAverageWindSpeed()));
     }

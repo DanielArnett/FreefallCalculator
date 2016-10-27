@@ -86,6 +86,29 @@ public class Winds {
     }
 
     /**
+     * Add a windspeed at a certain altitude.
+     * @param newAltitude The altitude of the wind.
+     * @param newSpeed The velocity of the wind.
+     * @param newHeading The heading of the wind.
+     */
+    public void addInterpolatedWind(double newAltitude, double newSpeed, double newHeading) {
+        // If a windspeed is already recorded at a particular altitude
+        if (interpolatedAltitude.contains(newAltitude)) {
+            // Remove the old value
+            int indexToRemove = interpolatedAltitude.indexOf(newAltitude);
+            new IllegalArgumentException("Interpolated windspeed already recorded at altitude " +
+                    String.valueOf(newAltitude) + ". Windspeed of " + String.valueOf(newSpeed) +
+                    " will be used.").printStackTrace();
+            interpolatedAltitude.remove(indexToRemove);
+            interpolatedSpeed.remove(   indexToRemove);
+            interpolatedHeading.remove( indexToRemove);
+        }
+        interpolatedAltitude.add(newAltitude);
+        interpolatedSpeed.add(newSpeed);
+        interpolatedHeading.add(newHeading);
+    }
+
+    /**
      * @return The average x value of the wind headings.
      */
     private double averageX() {
@@ -201,31 +224,38 @@ public class Winds {
      *              of 2000ft you can estimate the windspeed at every foot in between by setting the
      *              step size to 3000-2000=1000. Otherwise if you want to estimate the windspeed at
      *              every other foot you would set the step size to be 500.
-     *              @throws IllegalArgumentException if 
      */
     public void interpolateWindspeedLinearly(double steps) {
         // Sort the winds
         sortWindsByAltitudeAscending();
 
-        double stepsPerFoot = steps / (getMaxAltitude() - getMinAltitude());
+        double feetPerStep = (getMaxAltitude() - getMinAltitude()) / steps;
         // For each pair of altitudes
         for (int i = 0; i < windAltitude.size()-1; i++) {
             // Get the number of steps between the altitude pair
             double feetBetweenAltitudePair = windAltitude.get(i + 1) - windAltitude.get(i);
-            double stepsBetweenAltitudePair = feetBetweenAltitudePair * stepsPerFoot;
+            double stepAltitude = windAltitude.get(i);
+            double stepsBetweenPair = feetBetweenAltitudePair / feetPerStep;
             // Get the distance between the two velocity points
+            double lowX  = windSpeed.get(i) *   Math.cos(Math.toRadians(windHeading.get(i)));
+            double lowY  = windSpeed.get(i) *   Math.sin(Math.toRadians(windHeading.get(i)));
+            double highX = windSpeed.get(i+1) * Math.cos(Math.toRadians(windHeading.get(i+1)));
+            double highY = windSpeed.get(i+1) * Math.sin(Math.toRadians(windHeading.get(i+1)));
 
-            // Get the delta-x and delta-y
-
-
+            addInterpolatedWind(windAltitude.get(i), windSpeed.get(i), windHeading.get(i));
             // For each interpolated altitude
-
-                // Add the delta-x and delta-y to the wind vector
-
+            for (int j = 0; j < stepsBetweenPair; j++) {
+                double x = ((stepsBetweenPair - 1 - j)/stepsBetweenPair) * lowX + ((j+1)/stepsBetweenPair) * highX;
+                double y = ((stepsBetweenPair - 1 - j)/stepsBetweenPair) * lowY + ((j+1)/stepsBetweenPair) * highY;
+                System.out.println(String.valueOf(x) + "," + String.valueOf(y));
                 // Set the new heading
 
                 // Set the new Speed
+
+                stepAltitude += feetPerStep;
+            }
         }
+        addInterpolatedWind(windAltitude.get(windAltitude.size()-1), windSpeed.get(windAltitude.size()-1), windHeading.get(windAltitude.size()-1));
     }
     public double getMaxAltitude() {
         if (currentSortMethod != SortMethod.ALTITUDE) {
