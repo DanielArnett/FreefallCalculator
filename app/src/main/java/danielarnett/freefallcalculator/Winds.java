@@ -1,5 +1,7 @@
-package com.danielarnett;
+package danielarnett.freefallcalculator;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Vector;
 
 /**
@@ -9,6 +11,7 @@ import java.util.Vector;
 public class Winds {
     private enum SortMethod { ALTITUDE, SPEED, HEADING, NONE };
     private SortMethod currentSortMethod;
+    public int numberOfDecimals = 2;
     /**
      * windAltitude, windSpeed, and windHeading must all stay in the same order.
      * TODO: Create a simple Wind object that contains each of these doubles, then create a list or vector of Wind objects.
@@ -230,9 +233,23 @@ public class Winds {
      * @return The average heading of the wind in degrees
      */
     public double getAverageHeading() {
-        return pointToHeadingInDegrees(this.averageY(),this.averageX());
+        double heading = pointToHeadingInDegrees(this.averageY(),this.averageX());
+        return round(heading, numberOfDecimals);
     }
 
+    /**
+     * Rounding function to make output values prettier.
+     * @param value The double to be rounded.
+     * @param places The number of decimal points to round to.
+     * @return A rounded value.
+     */
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
     /**
      * Convert an x,y pair into a heading in radians. Note that since we're using compass
      * headings instead of the unit circle x and y are flipped.
@@ -290,7 +307,7 @@ public class Winds {
         double average = 0;
         average = Math.pow(averageXInRange(lo, hi), 2) + Math.pow(averageYInRange(lo, hi), 2);
         average = Math.sqrt(average);
-        return average;
+        return round(average, numberOfDecimals);
     }
     private void sortWindsByAltitudeAscending() {
         if (currentSortMethod != SortMethod.ALTITUDE) {

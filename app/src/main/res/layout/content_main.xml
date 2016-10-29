@@ -12,8 +12,316 @@
     tools:context="danielarnett.freefallcalculator.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <TableLayout
+        android:id="@+id/free_fall_altitudes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Exit Altitude"
+                android:id="@+id/exitView"
+                android:layout_alignParentTop="false"
+                android:layout_alignParentStart="true"
+                android:layout_alignBottom="@+id/exitText"
+                android:layout_toStartOf="@+id/exitText"
+                android:textSize="25dp"
+                android:layout_alignParentBottom="false"
+                android:layout_column="0" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:ems="10"
+                android:id="@+id/exitText"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_column="1"
+                android:nextFocusDown="@+id/deployText"/>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:text="Deployment Altitude"
+                android:id="@+id/deployView"
+                android:textSize="20dp"
+                android:layout_alignBottom="@+id/deployText"
+                android:layout_alignParentStart="true"
+                android:layout_column="0"
+                android:layout_width="match_parent" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:ems="10"
+                android:id="@+id/deployText"
+                android:layout_below="@+id/exitText"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@+id/deployView"
+                android:layout_column="1"
+                android:nextFocusDown="@+id/altitudeText1" />
+        </TableRow>
+
+    </TableLayout>
+
+    <TableLayout
+        android:id="@+id/wind_params"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_below="@+id/free_fall_altitudes"
+        android:paddingTop="20dp"
+        android:stretchColumns="3">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Winds"
+            android:id="@+id/windsView"
+            android:textAlignment="center"
+            android:textSize="30dp" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Altitude"
+                android:id="@+id/altitudeView"
+                android:textAlignment="center"
+                android:textSize="20dp" />
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Speed"
+                android:id="@+id/speedView"
+                android:textAlignment="center"
+                android:textSize="20dp"
+                android:layout_width="match_parent" />
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Heading"
+                android:id="@+id/headingView"
+                android:textAlignment="center"
+                android:textSize="20dp"
+                android:layout_width="match_parent" />
+        </TableRow>
+
+        <TableRow>
+            <EditText
+                android:id="@+id/altitudeText1"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:ems="10"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_column="0"
+                android:nextFocusDown="@+id/speedText1" />
+
+            <EditText
+                android:id="@+id/speedText1"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:ems="10"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_column="1"
+                android:nextFocusDown="@+id/headingText1" />
+
+            <EditText
+                android:id="@+id/headingText1"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:ems="10"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_column="1"
+                android:nextFocusDown="@+id/altitudeText2" />
+        </TableRow>
+        <TableRow>
+            <EditText
+                android:id="@+id/altitudeText2"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:ems="10"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_column="0"
+                android:nextFocusDown="@+id/speedText2" />
+
+            <EditText
+                android:id="@+id/speedText2"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:ems="10"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_column="1"
+                android:nextFocusDown="@+id/headingText2" />
+
+            <EditText
+                android:id="@+id/headingText2"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:ems="10"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_column="1"
+                android:nextFocusDown="@+id/altitudeText3"/>
+        </TableRow>
+        <TableRow>
+            <EditText
+                android:id="@+id/altitudeText3"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:ems="10"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_column="0"
+                android:nextFocusDown="@+id/speedText3" />
+
+            <EditText
+                android:id="@+id/speedText3"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:ems="10"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_column="1"
+                android:nextFocusDown="@+id/headingText3" />
+
+            <EditText
+                android:id="@+id/headingText3"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:ems="10"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_column="1"
+                android:nextFocusDown="@+id/altitudeText4"/>
+        </TableRow>
+        <TableRow>
+            <EditText
+                android:id="@+id/altitudeText4"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:ems="10"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_column="0"
+                android:nextFocusDown="@+id/speedText4" />
+
+            <EditText
+                android:id="@+id/speedText4"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:ems="10"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_column="1"
+                android:nextFocusDown="@+id/headingText4" />
+
+            <EditText
+                android:id="@+id/headingText4"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:ems="10"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_column="1"
+                android:nextFocusDown="@+id/altitudeText5" />
+        </TableRow>
+        <TableRow>
+            <EditText
+                android:id="@+id/altitudeText5"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:ems="10"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_column="0"
+                android:nextFocusDown="@+id/speedText5" />
+
+            <EditText
+                android:id="@+id/speedText5"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:ems="10"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_column="1"
+                android:nextFocusDown="@+id/headingText5"/>
+
+            <EditText
+                android:id="@+id/headingText5"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:ems="10"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_column="1" />
+        </TableRow>
+    </TableLayout>
 </RelativeLayout>

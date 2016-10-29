@@ -1,4 +1,4 @@
-package com.danielarnett;
+package danielarnett.freefallcalculator;
 
 /**
  * FreeFallCalculator is used to calculate average windspeed, wind heading, freefall time
@@ -46,7 +46,7 @@ public class FreeFallCalculator {
         else {
             freefallTimeInSeconds += firstOneThousandFeetInSeconds * (exitAltitude - deploymentAltitude);
         }
-        return freefallTimeInSeconds;
+        return winds.round(freefallTimeInSeconds, winds.numberOfDecimals);
     }
 
     public double getExitAltitude() {
@@ -99,6 +99,26 @@ public class FreeFallCalculator {
         speed *= this.MPH_TO_FPS;
         double seconds = this.getFreefallTimeInSeconds();
         return speed * seconds;
+    }
+
+    public void addWind(double altitude, double speed, double heading) {
+        double MAX_ALTITUDE = 1000000.0;
+        double MAX_SPEED = 1000.0;
+        double MAX_HEADING = 360.0;
+        if (0.0 <= altitude && altitude < MAX_ALTITUDE &&
+                0.0 <= speed && speed < MAX_SPEED &&
+                0.0 <= heading && heading <= 360.0) {
+            this.winds.addWind(altitude, speed, heading);
+        }
+        else if (altitude == -1.0 || speed == -1.0 || heading == -1.0) {
+            // Do nothing
+        }
+        else {
+            throw new IllegalArgumentException("Something's out of bounds.\n" +
+                "Wind altitude must be between 0 and " + MAX_ALTITUDE +
+                "Wind speed must be between 0 and " + MAX_SPEED +
+                "Wind heading must be between 0 and " + MAX_HEADING);
+        }
     }
     public static void main(String[] args) {
         double exitAltitude = 12000;
