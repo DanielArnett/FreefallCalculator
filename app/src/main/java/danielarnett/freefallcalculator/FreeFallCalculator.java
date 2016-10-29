@@ -98,7 +98,7 @@ public class FreeFallCalculator {
         double speed = this.winds.getAverageWindspeedInRange(this.deploymentAltitude, this.exitAltitude);
         speed *= this.MPH_TO_FPS;
         double seconds = this.getFreefallTimeInSeconds();
-        return speed * seconds;
+        return winds.round(speed * seconds, winds.numberOfDecimals);
     }
 
     public void addWind(double altitude, double speed, double heading) {
