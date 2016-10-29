@@ -70,13 +70,14 @@ public class OpeningPointCalculator {
         return speed * seconds;
     }
     public static void main(String[] args) {
-        double exitAltitude = 12000;
-        double deploymentAltitude = 6000;
+        double exitAltitude = 13500;
+        double deploymentAltitude = 5000;
         OpeningPointCalculator OPCalculator = new OpeningPointCalculator(exitAltitude, deploymentAltitude);
-        OPCalculator.winds.addWind(12000, OPCalculator.FPS_TO_MPH, 360);
-        OPCalculator.winds.addWind( 6000, OPCalculator.FPS_TO_MPH, 360);
-
-
+        OPCalculator.winds.addWind(13500, 63, 310);
+        OPCalculator.winds.addWind(12000, 63, 310);
+        OPCalculator.winds.addWind( 9000, 53, 305);
+        OPCalculator.winds.addWind( 6000, 43, 290);
+        OPCalculator.winds.addWind( 3000, 32, 300);
 
         System.out.println("Average Wind Heading in Degrees:        " + String.valueOf(OPCalculator.winds.getAverageHeading()));
         System.out.println("Average Wind Speed in Miles/Hour:       " + String.valueOf(OPCalculator.winds.getAverageWindSpeed()));

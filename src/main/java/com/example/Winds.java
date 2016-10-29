@@ -138,6 +138,7 @@ public class Winds {
      * @throws IllegalStateException if an interpolate function has not been called yet,
      * or if there are no interpolated winds.
      * @throws IllegalArgumentException if lo <= hi
+     * @throws IllegalArgumentException if hi < the maximum recorded wind altitude
      */
     private double averageXInRange(double lo, double hi) {
         if (this.interpolated == false) {
@@ -147,6 +148,16 @@ public class Winds {
         if (hi <= lo) {
             throw new IllegalArgumentException("The low windspeed is greater or equal to the " +
                     "high windspeed. Something's not right here.");
+        }
+        if (this.getMaxAltitude() < hi) {
+            throw new IllegalArgumentException("Error: No windspeed data available above " +
+                    String.valueOf(this.getMaxAltitude()) + " feet." +
+                    "Please jump lower or get windspeeds at higher altitudes. " +
+                    "Wind information was requested at " + String.valueOf(hi) + " feet.");
+        }
+        if (lo < 0) {
+            throw new IllegalArgumentException("Error: No windspeed data available below the ground" +
+                    String.valueOf(lo) + " is not an altitude to which you want to fall.");
         }
         int loIndex = interpolatedAltitude.indexOf(lo);
         int hiIndex = interpolatedAltitude.indexOf(hi);
@@ -164,6 +175,7 @@ public class Winds {
      * @throws IllegalStateException if an interpolate function has not been called yet,
      * or if there are no interpolated winds.
      * @throws IllegalArgumentException if lo <= hi
+     * @throws IllegalArgumentException if hi < the maximum recorded wind altitude
      */
     private double averageYInRange(double lo, double hi) {
         if (this.interpolated == false) {
@@ -173,6 +185,16 @@ public class Winds {
         if (hi <= lo) {
             throw new IllegalArgumentException("The low windspeed is greater or equal to the " +
                     "high windspeed. Something's not right here.");
+        }
+        if (this.getMaxAltitude() < hi) {
+            throw new IllegalArgumentException("Error: No windspeed data available above " +
+                    String.valueOf(this.getMaxAltitude()) + " feet." +
+                    "Please jump lower or get windspeeds at higher altitudes. " +
+                    "Wind information was requested at " + String.valueOf(hi) + " feet.");
+        }
+        if (lo < 0) {
+            throw new IllegalArgumentException("Error: No windspeed data available below the ground" +
+                    String.valueOf(lo) + " is not an altitude to which you want to fall.");
         }
         int loIndex = interpolatedAltitude.indexOf(lo);
         int hiIndex = interpolatedAltitude.indexOf(hi);
@@ -316,8 +338,8 @@ public class Winds {
      */
     public void interpolateWindspeedLinearly(double steps) {
         if (0 < this.interpolatedAltitude.size()) {
-            if (steps != this.interpolatedAltitude.size() &&
-                    getMinAltitude() != getMinInterpolatedAltitude() &&
+            if (steps != this.interpolatedAltitude.size() ||
+                    getMinAltitude() != getMinInterpolatedAltitude() ||
                     getMaxAltitude() != getMaxInterpolatedAltitude()) {
                 this.interpolatedAltitude.clear();
                 this.interpolatedHeading.clear();
