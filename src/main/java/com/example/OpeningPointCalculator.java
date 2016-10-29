@@ -1,24 +1,34 @@
 package com.example;
 
 public class OpeningPointCalculator {
-    private double MIN_EXIT_ALTITUDE = 2000;
-    private double MIN_DEPLOYMENT_ALTITUDE = 1000;
+    private final double MIN_EXIT_ALTITUDE = 2000;
+    private final double MIN_DEPLOYMENT_ALTITUDE = 1000;
+    private final double TERMINAL_VELOCITY_IN_MPH = 120;
+    public  final double MPH_TO_FPS = 66.0/45.0;
+    public  final double FPS_TO_MPH = 1.0 / MPH_TO_FPS;
     private double exitAltitude;
     private double deploymentAltitude;
     private double firstOneThousandFeetInSeconds = 12;
     private double terminalOneThousandFeetTimeInSeconds = 5.5;
-    private double freefallTimeInSeconds;
+    public Winds winds;
 
     public OpeningPointCalculator(double exitAltitude, double deploymentAltitude) {
         this.setExitAltitude(exitAltitude);
         this.setDeploymentAltitude(deploymentAltitude);
+        this.winds = new Winds();
     }
 
+    /**
+     * Gets the freefall time in seconds including accelleration.
+     * TODO: Make this accurate using actual acceleration and drag as a function of time.
+     * @return The number of seconds in freefall
+     */
     public double getFreefallTimeInSeconds() {
         double feetAtTerminalVelocity = (exitAltitude - deploymentAltitude - 1000);
+        double freefallTimeInSeconds = 0;
         if (1000 < (exitAltitude - deploymentAltitude)) {
             freefallTimeInSeconds += firstOneThousandFeetInSeconds;
-            freefallTimeInSeconds += terminalOneThousandFeetTimeInSeconds * feetAtTerminalVelocity;
+            freefallTimeInSeconds += feetAtTerminalVelocity / (TERMINAL_VELOCITY_IN_MPH * MPH_TO_FPS);
         }
         else {
             freefallTimeInSeconds += firstOneThousandFeetInSeconds * (exitAltitude - deploymentAltitude);
@@ -53,18 +63,31 @@ public class OpeningPointCalculator {
             this.deploymentAltitude = deploymentAltitude;
         }
     }
-
+    public double getHorizontalDistanceTraveled() {
+        double speed = this.winds.getAverageWindspeedInRange(this.deploymentAltitude, this.exitAltitude);
+        speed *= this.MPH_TO_FPS;
+        double seconds = this.getFreefallTimeInSeconds();
+        return speed * seconds;
+    }
     public static void main(String[] args) {
-        double exitAltitude = 13500;
-        double deploymentAltitude = 5000;
+        double exitAltitude = 12000;
+        double deploymentAltitude = 6000;
         OpeningPointCalculator OPCalculator = new OpeningPointCalculator(exitAltitude, deploymentAltitude);
-        Winds winds = new Winds();
-        winds.addWind(12000, 63, 310);
-        winds.addWind( 9000, 53, 305);
-        winds.addWind( 6000, 43, 290);
-        winds.addWind( 3000, 32, 300);
-        winds.interpolateWindspeedLinearly(12000-3000);
-        System.out.println("Average Heading:    " + String.valueOf(winds.getAverageHeading()));
-        System.out.println("Average Wind Speed: " + String.valueOf(winds.getAverageWindSpeed()));
+        OPCalculator.winds.addWind(12000, OPCalculator.FPS_TO_MPH, 360);
+        OPCalculator.winds.addWind( 6000, OPCalculator.FPS_TO_MPH, 360);
+
+
+
+        System.out.println("Average Wind Heading in Degrees:        " + String.valueOf(OPCalculator.winds.getAverageHeading()));
+        System.out.println("Average Wind Speed in Miles/Hour:       " + String.valueOf(OPCalculator.winds.getAverageWindSpeed()));
+        System.out.println("Approximate Time in Freefall:           " + String.valueOf(OPCalculator.getFreefallTimeInSeconds()));
+        System.out.println("Distance Traveled Horizontally in Feet: " + String.valueOf(OPCalculator.getHorizontalDistanceTraveled()));
+
+        // Display all interpolated wind values
+//        for (int i = 0; i < OPCalculator.winds.interpolatedAltitude.size(); i++) {
+//            System.out.println(String.valueOf(OPCalculator.winds.interpolatedAltitude.get(i)) + "," +
+//                    String.valueOf(OPCalculator.winds.interpolatedSpeed.get(i)) + "," +
+//                    String.valueOf(OPCalculator.winds.interpolatedHeading.get(i)));
+//        }
     }
 }

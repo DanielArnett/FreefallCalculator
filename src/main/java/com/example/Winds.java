@@ -8,10 +8,11 @@ public class Winds {
     private Vector<Double> windAltitude;
     private Vector<Double> windSpeed;
     private Vector<Double> windHeading;
+    private boolean interpolated;
 
-    private Vector<Double> interpolatedAltitude;
-    private Vector<Double> interpolatedSpeed;
-    private Vector<Double> interpolatedHeading;
+    public Vector<Double> interpolatedAltitude;
+    public Vector<Double> interpolatedSpeed;
+    public Vector<Double> interpolatedHeading;
 
     public Winds() {
         this.init();
@@ -133,6 +134,59 @@ public class Winds {
     }
 
     /**
+     * @return The average interpolated X value of the wind headings.
+     * @throws IllegalStateException if an interpolate function has not been called yet,
+     * or if there are no interpolated winds.
+     * @throws IllegalArgumentException if lo <= hi
+     */
+    private double averageXInRange(double lo, double hi) {
+        if (this.interpolated == false) {
+            throw new IllegalStateException("Error: The altitude range needs to be interpolated " +
+                    "before averaging a limited range. Call an Interpolate function first.");
+        }
+        if (hi <= lo) {
+            throw new IllegalArgumentException("The low windspeed is greater or equal to the " +
+                    "high windspeed. Something's not right here.");
+        }
+        int loIndex = interpolatedAltitude.indexOf(lo);
+        int hiIndex = interpolatedAltitude.indexOf(hi);
+        double average = 0;
+        double heading = 0;
+        for (int i = loIndex; i < hiIndex; i++) {
+            heading = interpolatedHeading.get(i);
+            average += interpolatedSpeed.get(i) * Math.sin(Math.toRadians(heading));
+        }
+        average /= interpolatedSpeed.size();
+        return average;
+    }
+    /**
+     * @return The average interpolated Y value of the wind headings.
+     * @throws IllegalStateException if an interpolate function has not been called yet,
+     * or if there are no interpolated winds.
+     * @throws IllegalArgumentException if lo <= hi
+     */
+    private double averageYInRange(double lo, double hi) {
+        if (this.interpolated == false) {
+            throw new IllegalStateException("Error: The altitude range needs to be interpolated " +
+                    "before averaging a limited range. Call an Interpolate function first.");
+        }
+        if (hi <= lo) {
+            throw new IllegalArgumentException("The low windspeed is greater or equal to the " +
+                    "high windspeed. Something's not right here.");
+        }
+        int loIndex = interpolatedAltitude.indexOf(lo);
+        int hiIndex = interpolatedAltitude.indexOf(hi);
+        double average = 0;
+        double heading = 0;
+        for (int i = loIndex; i < hiIndex; i++) {
+            heading = interpolatedHeading.get(i);
+            average += interpolatedSpeed.get(i) * Math.cos(Math.toRadians(heading));
+        }
+        average /= interpolatedSpeed.size();
+        return average;
+    }
+
+    /**
      *
      * @return The average heading of the wind in degrees
      */
@@ -148,6 +202,9 @@ public class Winds {
      * @return An angle in radians corresponding to the heading of point x,y.
      */
     private double pointToHeadingInRadians(double x, double y) {
+        if (x == 0 && y == 0) {
+            return 0;
+        }
         double heading = y/x;
 
         heading = Math.atan(heading);
@@ -174,6 +231,25 @@ public class Winds {
     public double getAverageWindSpeed() {
         double average = 0;
         average = Math.pow(averageX(),2) + Math.pow(averageY(),2);
+        average = Math.sqrt(average);
+        return average;
+    }
+
+    /**
+     *
+     * @param lo The low altitude in a range
+     * @param hi The high altitude in a range
+     * @return The average windspeed between those values
+     * @throws IllegalArgumentException if hi <= lo
+     */
+    public double getAverageWindspeedInRange(double lo, double hi) {
+        if (hi <= lo) {
+            throw new IllegalArgumentException("The low windspeed is greater or equal to the " +
+                    "high windspeed. Something's not right here.");
+        }
+        this.interpolateWindspeedLinearly(this.getMaxAltitude() - this.getMinAltitude());
+        double average = 0;
+        average = Math.pow(averageXInRange(lo, hi), 2) + Math.pow(averageYInRange(lo, hi), 2);
         average = Math.sqrt(average);
         return average;
     }
@@ -239,6 +315,15 @@ public class Winds {
      *              every other foot you would set the step size to be 500.
      */
     public void interpolateWindspeedLinearly(double steps) {
+        if (0 < this.interpolatedAltitude.size()) {
+            if (steps != this.interpolatedAltitude.size() &&
+                    getMinAltitude() != getMinInterpolatedAltitude() &&
+                    getMaxAltitude() != getMaxInterpolatedAltitude()) {
+                this.interpolatedAltitude.clear();
+                this.interpolatedHeading.clear();
+                this.interpolatedSpeed.clear();
+            }
+        }
         // Sort the winds
         sortWindsByAltitudeAscending();
 
@@ -282,6 +367,7 @@ public class Winds {
         if (interpolatedAltitude.size() != interpolatedSpeed.size() || interpolatedAltitude.size() != interpolatedHeading.size()) {
             System.out.println("Warning! Unequal number of altitudes,speeds, and sizes.");
         }
+        this.interpolated = true;
     }
     public double getMaxAltitude() {
         if (currentSortMethod != SortMethod.ALTITUDE) {
@@ -294,5 +380,11 @@ public class Winds {
             this.sortWindsByAltitudeAscending();
         }
         return windAltitude.get(0);
+    }
+    private double getMaxInterpolatedAltitude() {
+        return interpolatedAltitude.get(interpolatedAltitude.size()-1);
+    }
+    private double getMinInterpolatedAltitude() {
+        return interpolatedAltitude.get(0);
     }
 }
